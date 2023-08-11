@@ -1,0 +1,7 @@
+# Ignore python cache files scattered across the whole project tree
+**/__pycache__
+
+# Ignore downloads, checkpoints and tensorboard log files
+download/**
+checkpoints/**
+logging/**
