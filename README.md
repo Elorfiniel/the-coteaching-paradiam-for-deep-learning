@@ -4,11 +4,10 @@ This repository re-implements the code for Co-teaching, a new deep learning para
 
 ## Coming Soon
 
-1. CIFAR10 and CIFAR100 dataset.
-2. Support for CUDA devices.
-3. Extra experiment options.
-4. A more detailed README.
-5. Interesting findings from many experiments.
+1. Support for CUDA devices.
+2. Extra experiment options.
+3. A more detailed README.
+4. Interesting findings from many experiments.
 
 ## Requirement
 

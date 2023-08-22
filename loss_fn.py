@@ -1,6 +1,11 @@
 import torch as torch
 import torch.nn.functional as F
 
+
+def loss_primitive(y, t):
+  loss = F.cross_entropy(y, t, reduction='mean')
+  return loss
+
 def loss_coteaching(y_1, y_2, t, forget_rate, ind, noise_or_not):
   loss_1 = F.cross_entropy(y_1, t, reduction='none')
   ind_1_sorted = torch.argsort(loss_1.data)

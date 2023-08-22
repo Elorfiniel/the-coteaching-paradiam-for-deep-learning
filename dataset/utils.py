@@ -28,6 +28,24 @@ def apply_transition_matrix(M, labels, random_state=42):
 
   return noisy_labels
 
+
+def noisify_uniform_random(labels, noise_rate, n_classes, random_state=42):
+  assert noise_rate > 0.0 and noise_rate < 1.0 and n_classes > 1
+  assert np.min(labels) >= 0 and np.max(labels) <= n_classes - 1
+
+  M_transition = np.random.rand(n_classes, n_classes)
+  for row in range(n_classes):
+    s = np.sum(M_transition[row]) - M_transition[row, row]
+    if s != noise_rate:
+      M_transition[row] *= noise_rate / (s + np.finfo(float).eps)
+    M_transition[row, row] = 1.0 - noise_rate
+
+  noisy_labels = apply_transition_matrix(M_transition, labels, random_state)
+  actual_noise_rate = np.average(noisy_labels != labels)
+  assert actual_noise_rate >= 0.0
+
+  return noisy_labels, actual_noise_rate
+
 def noisify_pair_flip(labels, noise_rate, n_classes, random_state=42):
   assert noise_rate > 0.0 and noise_rate < 1.0 and n_classes > 1
   assert np.min(labels) >= 0 and np.max(labels) <= n_classes - 1
@@ -59,8 +77,12 @@ def noisify_symmetric(labels, noise_rate, n_classes, random_state=42):
 
   return noisy_labels, actual_noise_rate
 
+
 def noisify(noise_type, labels, noise_rate, n_classes, random_state):
-  assert noise_type in ['pair_flip', 'symmetric']
+  assert noise_type in ['pair_flip', 'symmetric', 'uniform_random']
+
+  if noise_type == 'uniform_random':
+    noisy_labels, actual_noise_rate = noisify_uniform_random(labels, noise_rate, n_classes, random_state)
 
   if noise_type == 'pair_flip':
     noisy_labels, actual_noise_rate = noisify_pair_flip(labels, noise_rate, n_classes, random_state)

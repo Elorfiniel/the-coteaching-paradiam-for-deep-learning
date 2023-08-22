@@ -2,6 +2,23 @@ import torch as torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+
+network_dictionary = {} # All networks defined in this file
+
+def instanciate_network(name, kwargs):
+  if not network_dictionary.get(name, False):
+    raise RuntimeError(f'No network with name "{name}" exposed, have you decorated the class yet?')
+  return network_dictionary[name](**kwargs)
+
+
+def add_network_to_dictionary(cls_network):
+  if hasattr(cls_network, '__name__'):
+    cls_name = getattr(cls_network, '__name__')
+    network_dictionary[cls_name] = cls_network
+  return cls_network
+
+
+@add_network_to_dictionary
 class CnnFromPaper(nn.Module):
   def __init__(self, in_channels=3, n_classes=10, dropout_rate=0.25):
     super(CnnFromPaper, self).__init__()
@@ -18,7 +35,6 @@ class CnnFromPaper(nn.Module):
     self.conv_9 = nn.Conv2d(256, 128, kernel_size=3, stride=1, padding=0)
 
     self.logits = nn.Linear(128, n_classes)
-    # self.bn_logits = nn.BatchNorm1d
 
     self.bn_1 = nn.BatchNorm2d(128)
     self.bn_2 = nn.BatchNorm2d(128)
@@ -64,6 +80,7 @@ class CnnFromPaper(nn.Module):
 
     return logits
 
+@add_network_to_dictionary
 class MyLeNet(nn.Module):
   '''Implementation of LeNet (LeNet-5) with modifications:
 
